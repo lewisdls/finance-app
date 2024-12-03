@@ -1,101 +1,202 @@
-import Image from "next/image";
+"use client";
+
+import { IoMdArrowDropright } from "react-icons/io";
+import { MdFastfood, MdLocalGroceryStore } from "react-icons/md";
+import { RiBillFill } from "react-icons/ri";
+import { FaUser, FaGasPump } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Link from "next/link";
+import { getColorByCategory, getIconByCategory } from "./transactions/page";
+import Chart from "@/components/pieChart";
+
+interface Transaction {
+  id: string;
+  amount: number;
+  category: string;
+  merchant: string;
+  type: string;
+  date: string;
+}
+
+interface Bill {
+  id: string;
+  merchant: string;
+  amount: number;
+  recurrency: string;
+  isPaid: boolean;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [bills, setBills] = useState<Bill[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const getTransactions = async () => {
+      try {
+        const res = await axios.get("/api/transactions");
+        setTransactions(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const getBills = async () => {
+      try {
+        const res = await axios.get("/api/bills");
+        setBills(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getTransactions();
+    getBills();
+  }, []);
+
+  const totalDebits = transactions
+    .filter((t) => t.type === "Debit")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalCredits = transactions
+    .filter((t) => t.type === "Credit")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const balance =
+    transactions
+      .filter((t) => t.type === "Credit")
+      .reduce((sum, t) => sum + t.amount, 0) -
+    transactions
+      .filter((t) => t.type === "Debit")
+      .reduce((sum, t) => sum + t.amount, 0) +
+    50000;
+
+  const totalBills = bills.reduce((sum, b) => sum + b.amount, 0);
+
+  const totalPaidBills = bills
+    .filter((b) => b.isPaid)
+    .reduce((sum, b) => sum + b.amount, 0);
+
+  const totalUpcoming = bills
+    .filter((b) => !b.isPaid)
+    .reduce((sum, b) => sum + b.amount, 0);
+
+  return (
+    <div className="flex flex-col gap-8 p-8 w-full">
+      <h1 className="text-4xl font-bold">Overview</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="flex flex-col md:flex-row gap-6 w-full lg:col-span-2">
+          <div className="flex flex-col gap-3 p-4 bg-[#18171b] text-white rounded-lg w-full">
+            <span className="text-xs">Current Balance</span>
+            <p className="text-3xl font-semibold">
+              $
+              {balance.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+              })}
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 p-4 bg-white rounded-lg w-full">
+            <span className="text-xs">Income</span>
+            <p className="text-3xl font-semibold">
+              $
+              {totalCredits.toString().includes(".")
+                ? totalCredits.toLocaleString()
+                : totalCredits.toLocaleString() + ".00"}
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 p-4 bg-white rounded-lg w-full">
+            <span className="text-xs">Expenses</span>{" "}
+            <p className="text-3xl font-semibold">
+              $
+              {totalDebits.toString().includes(".")
+                ? totalDebits.toLocaleString()
+                : totalDebits.toLocaleString() + ".00"}
+            </p>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="flex flex-col gap-8 p-6 bg-white rounded-lg">
+          <p className="text-xl font-semibold">Expenses Chart</p>
+          <div>
+            <Chart />
+          </div>
+        </div>
+        <div className="flex flex-col gap-8 p-6 bg-white rounded-lg">
+          <div className="flex items-center justify-between">
+            <p className="text-xl font-semibold">Recurring Bills</p>
+            <Link
+              href="/bills"
+              className="text-sm text-gray-500 font-medium hover:underline cursor-pointer flex items-center gap-2"
+            >
+              See Details <IoMdArrowDropright className="text-xl" />
+            </Link>
+          </div>
+          <div className="flex flex-col gap-4 h-fit">
+            <div className="flex justify-between bg-[#F9F5F1] p-4 rounded-lg border-l-4 border-green-700">
+              <p className="text-gray-500 font-medium">Paid Bills</p>
+              <span className="font-bold">
+                $
+                {totalPaidBills.toString().includes(".")
+                  ? totalPaidBills.toLocaleString()
+                  : totalPaidBills.toLocaleString() + ".00"}
+              </span>
+            </div>
+            <div className="flex justify-between bg-[#F9F5F1] p-4 rounded-lg border-l-4 border-yellow-700">
+              <p className="text-gray-500 font-medium">Total Upcoming</p>
+              <span className="font-bold">
+                $
+                {totalUpcoming.toString().includes(".")
+                  ? totalUpcoming.toLocaleString()
+                  : totalUpcoming.toLocaleString() + ".00"}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col lg:col-span-2 gap-2 p-6 bg-white rounded-lg">
+          <div className="flex items-center justify-between">
+            <p className="text-xl font-semibold">Recent Transactions</p>
+            <Link
+              href="/transactions"
+              className="text-sm text-gray-500 font-medium hover:underline flex items-center gap-2"
+            >
+              View All <IoMdArrowDropright className="text-xl" />
+            </Link>
+          </div>
+          <div>
+            {transactions.slice(0, 4).map((t) => (
+              <div
+                key={t.id}
+                className="flex items-center justify-between border-b-2 border-gray-100 last:border-0 py-4 last:pb-0"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="p-2 rounded-full text-white"
+                    style={{ backgroundColor: getColorByCategory(t.category) }}
+                  >
+                    {getIconByCategory(t.category)}
+                  </div>
+                  <p className="font-medium text-md">{t.merchant}</p>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  <p
+                    className={`font-bold text-md ${
+                      t.type === "Debit" ? "text-red-800" : "text-green-800"
+                    }`}
+                  >
+                    {t.type === "Debit" ? "-" : "+"}$
+                    {t.amount.toString().includes(".")
+                      ? t.amount.toLocaleString()
+                      : t.amount.toLocaleString() + ".00"}
+                  </p>
+                  <p className="text-sm text-gray-400 font-medium">
+                    {new Date(
+                      new Date(t.date).getTime() +
+                        new Date().getTimezoneOffset() * 60000
+                    ).toDateString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
