@@ -37,19 +37,11 @@ import {
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaEdit, FaGasPump, FaUser } from "react-icons/fa";
-import { SiYoutubemusic } from "react-icons/si";
-import { IoBag } from "react-icons/io5";
-import {
-  MdFastfood,
-  MdLocalGroceryStore,
-  MdMovie,
-  MdSpa,
-} from "react-icons/md";
-import { RiBillFill } from "react-icons/ri";
+import { FaEdit } from "react-icons/fa";
 import CreateTransaction from "@/components/createTransaction";
 import EditTransaction from "@/components/editTransaction";
 import { Button } from "@/components/ui/button";
+import { getIconByCategory, getColorByCategory } from "../utils/categories";
 
 interface Transaction {
   id: string;
@@ -64,54 +56,6 @@ interface Category {
   id: string;
   name: string;
 }
-
-const getColorByCategory = (category: string) => {
-  switch (category) {
-    case "Fast Food":
-      return "#CA8A04"; // Example color
-    case "Groceries":
-      return "#16A34A"; // Example color
-    case "Utilities":
-      return "#DC2626"; // Example color
-    case "Gas Stations":
-      return "#EA580C"; // Example color
-    case "Clothing":
-      return "#9333EA"; // Example color
-    case "Transfers":
-      return "#3633ea"; // Example color
-    case "Personal Care":
-      return "#008080"; // Example color
-    case "Entertainment":
-      return "#03A9F4"; // Example color
-    default:
-      return "#cccccc"; // Default color for unknown categories
-  }
-};
-
-const getIconByCategory = (category: string) => {
-  switch (category) {
-    case "Fast Food":
-      return <MdFastfood />;
-    case "Groceries":
-      return <MdLocalGroceryStore />;
-    case "Utilities":
-      return <RiBillFill />;
-    case "Gas Stations":
-      return <FaGasPump />;
-    case "Clothing":
-      return <IoBag />;
-    case "Transfers":
-      return <FaUser />;
-    case "Personal Care":
-      return <MdSpa />;
-    case "Entertainment":
-      return <MdMovie />;
-    case "Streaming":
-      return <SiYoutubemusic />;
-    default:
-      return <IoBag />;
-  }
-};
 
 const Transactions = () => {
   const [key, setKey] = useState(+new Date());
@@ -350,5 +294,3 @@ const Transactions = () => {
 };
 
 export default Transactions;
-
-export { getColorByCategory, getIconByCategory };

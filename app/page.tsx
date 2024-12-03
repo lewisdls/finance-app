@@ -7,7 +7,7 @@ import { FaUser, FaGasPump } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { getColorByCategory, getIconByCategory } from "./transactions/page";
+import { getIconByCategory, getColorByCategory } from "./utils/categories";
 import Chart from "@/components/pieChart";
 
 interface Transaction {

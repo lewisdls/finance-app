@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/chart";
 import { cn } from "@/lib/utils";
 import axios from "axios";
-import { getColorByCategory } from "@/app/transactions/page";
+import { getColorByCategory } from "@/app/utils/categories";
 
 interface Transaction {
   id: string;
