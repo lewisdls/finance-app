@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   try {
     const { amount, merchant, recurrency, isPaid } = await req.json();
 
-    if (!amount || !merchant || !recurrency || isPaid) {
+    if (!amount || !merchant || !recurrency) {
       return NextResponse.json({
         error: "Missing required fields",
         status: 400,

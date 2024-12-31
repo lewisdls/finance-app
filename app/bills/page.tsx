@@ -86,7 +86,7 @@ const Bills = () => {
   }, []);
 
   return (
-    <div className="flex flex-col p-6 w-full gap-8">
+    <div className="flex flex-col p-6 w-full gap-8 min-h-screen">
       <h1 className="text-4xl font-bold">Bills</h1>
       <div className="bg-white rounded-lg flex flex-col gap-6 p-6 w-full">
         <Dialog>
