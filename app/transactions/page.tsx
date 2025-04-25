@@ -11,7 +11,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -28,7 +27,6 @@ import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -247,7 +245,7 @@ const Transactions = () => {
           </Table>
         )}
         {totalPages > 1 && (
-          <Pagination className="mt-6 justify-center md:justify-start">
+          <Pagination className="justify-center md:justify-start">
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
