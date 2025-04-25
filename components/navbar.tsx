@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
-import { MdHomeFilled, MdPieChart } from "react-icons/md";
+import { MdHomeFilled } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
 import { RiBillFill } from "react-icons/ri";
 import { IoMdArrowDropleft, IoMdArrowDropright } from "react-icons/io";
@@ -19,17 +19,17 @@ const Navbar = () => {
 
   return (
     <div
-      className={`z-50 sticky bottom-0 lg:top-0 lg:left-0 lg:h-screen min-w-[275px] flex flex-col rounded-t-xl lg:rounded-l-none lg:rounded-r-3xl bg-[#201F24] text-white transition-all duration-300 ${
-        isShort && "min-w-[140px]"
-      }`}
+      className={`z-50 sticky bottom-0 lg:top-0 lg:left-0 lg:h-screen flex flex-col rounded-t-xl lg:rounded-l-none lg:rounded-r-3xl bg-[#201F24] text-white ${
+        isShort ? "lg:w-[100px]" : "lg:w-[300px]"
+      } transition-all duration-300`}
     >
       <p
         id="logo"
         className={`hidden lg:block text-2xl font-bold p-6 ${
-          isShort && "px-4"
+          isShort ? "lg:px-4 self-center" : "self-start"
         }`}
       >
-        dosantos
+        {isShort ? "d" : "dosantos"}
       </p>
       <div className="flex flex-col justify-between h-full">
         <div className="flex justify-center gap-6 lg:flex-col lg:gap-2">
@@ -44,7 +44,7 @@ const Navbar = () => {
             }`}
           >
             <MdHomeFilled className={`icon text-2xl`} />
-            <p className={`hidden ${!isShort && "md:block"}`}>Overview</p>
+            <p className={`hidden md:block ${isShort && "lg:hidden"}`}>Overview</p>
           </Link>
           <Link
             href="/transactions"
@@ -57,7 +57,7 @@ const Navbar = () => {
             }`}
           >
             <GrTransaction className="icon text-2xl" />
-            <p className={`hidden ${!isShort && "md:block"}`}>Transactions</p>
+            <p className={`hidden md:block ${isShort && "lg:hidden"}`}>Transactions</p>
           </Link>
           <Link
             href="/bills"
@@ -70,7 +70,7 @@ const Navbar = () => {
             }`}
           >
             <RiBillFill className="icon text-2xl" />
-            <p className={`hidden ${!isShort && "md:block"}`}>
+            <p className={`hidden md:block ${isShort && "lg:hidden"}`}>
               Recurring Bills
             </p>
           </Link>
@@ -86,7 +86,7 @@ const Navbar = () => {
           ) : (
             <div className="flex items-center gap-1">
               <IoMdArrowDropleft className="text-2xl" />{" "}
-              <p className="font-medium">Hide Menu</p>
+              <p className="font-medium">Minimize Menu</p>
             </div>
           )}
         </div>

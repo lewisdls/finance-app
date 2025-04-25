@@ -1,14 +1,12 @@
 "use client";
 
 import { IoMdArrowDropright } from "react-icons/io";
-import { MdFastfood, MdLocalGroceryStore } from "react-icons/md";
-import { RiBillFill } from "react-icons/ri";
-import { FaUser, FaGasPump } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { getIconByCategory, getColorByCategory } from "./utils/categories";
 import Chart from "@/components/pieChart";
+import AnimatedNumbers from "react-animated-numbers";
 
 interface Transaction {
   id: string;
@@ -67,7 +65,7 @@ export default function Home() {
     transactions
       .filter((t) => t.type === "Debit")
       .reduce((sum, t) => sum + t.amount, 0) +
-    50000;
+    10000;
 
   const totalBills = bills.reduce((sum, b) => sum + b.amount, 0);
 
@@ -86,30 +84,57 @@ export default function Home() {
         <div className="flex flex-col md:flex-row gap-6 w-full lg:col-span-2">
           <div className="flex flex-col gap-3 p-4 bg-[#18171b] text-white rounded-lg w-full">
             <span className="text-xs">Current Balance</span>
-            <p className="text-3xl font-semibold">
-              $
-              {balance.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
+            <div className="flex items-center gap-1">
+              <span className="text-3xl font-semibold">$</span>
+              <AnimatedNumbers
+              className="font-semibold"
+              includeComma
+              transitions={(index) => ({
+                type: "spring",
+                duration: index + 0.3,
               })}
-            </p>
+              animateToNumber={balance}
+              fontStyle={{
+                fontSize: 30,
+              }}
+            />
+            </div>
           </div>
           <div className="flex flex-col gap-3 p-4 bg-white rounded-lg w-full">
             <span className="text-xs">Income</span>
-            <p className="text-3xl font-semibold">
-              $
-              {totalCredits.toString().includes(".")
-                ? totalCredits.toLocaleString()
-                : totalCredits.toLocaleString() + ".00"}
-            </p>
+            <div className="flex items-center gap-1">
+              <span className="text-3xl font-semibold">$</span>
+              <AnimatedNumbers
+              className="font-semibold"
+              includeComma
+              transitions={(index) => ({
+                type: "spring",
+                duration: index + 0.3,
+              })}
+              animateToNumber={totalCredits}
+              fontStyle={{
+                fontSize: 30,
+              }}
+            />
+            </div>
           </div>
           <div className="flex flex-col gap-3 p-4 bg-white rounded-lg w-full">
             <span className="text-xs">Expenses</span>{" "}
-            <p className="text-3xl font-semibold">
-              $
-              {totalDebits.toString().includes(".")
-                ? totalDebits.toLocaleString()
-                : totalDebits.toLocaleString() + ".00"}
-            </p>
+            <div className="flex items-center gap-1">
+              <span className="text-3xl font-semibold">$</span>
+              <AnimatedNumbers
+              className="font-semibold"
+              includeComma
+              transitions={(index) => ({
+                type: "spring",
+                duration: index + 0.3,
+              })}
+              animateToNumber={totalDebits}
+              fontStyle={{
+                fontSize: 30,
+              }}
+            />
+            </div>
           </div>
         </div>
         <div className="flex flex-col gap-8 p-6 bg-white rounded-lg">
